@@ -9,6 +9,7 @@ class Problem(csp.CSP):
 
         super().__init__(variables, domains, graph, constraints_function)
 
+
     def dump_solution(self, fh):
 
 
