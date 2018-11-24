@@ -6,7 +6,7 @@ class Problem(csp.CSP):
     def __init__(self, fh):
 
         #TODO Write function that from filestream fh, sets variables, domains, graph, and constraints_function
-
+        
         super().__init__(variables, domains, graph, constraints_function)
 
 
