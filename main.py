@@ -176,7 +176,7 @@ class Associations(Input_Data):
             self.list.append(Courses_to_Attend(element,Courses,Turmas))
 
 
-    def Create_Association_List(self):
+    def Create_Association_List(self):              #TENHO LISTA DE TURMAS
         for element in self.associations:
             y = element.split(',')
             index_turma = self.turmas.index(y[0])
@@ -187,8 +187,34 @@ class Associations(Input_Data):
 class Problem(csp.CSP):
 
     def __init__(self, fh):
+        
+        data1 = TimeSlots(fh)
+        class_days = data1.Get_Class_Days()
+        time_slots = data1.Convert_TimeSlots()
 
-        #TODO Write function that from filestream fh, sets variables, domains, graph, and constraints_function
+        data2 = Rooms(fh)
+        rooms = data2.Show_Rooms()
+
+        data3 = Turmas(fh)
+        turmas = data3.Show_Turmas()
+
+        data4 = Courses(fh)
+
+        class_names = data4.Get_Class_Names()
+        class_types = data4.Get_Class_Types()
+        converted_classes = data4.Convert_Classes()
+
+        data5 = Associations(fh, class_names, turmas)
+        associations = data5.Create_Association_List()
+
+        variables = [element.Print_Lecture() for element in converted_classes]
+
+        domain = {}
+
+        number_of_timeslots = len(time_slots)
+        number_of_rooms = len()
+
+
 
         super().__init__(variables, domains, graph, constraints_function)
 
@@ -204,4 +230,8 @@ def solve(input_file, output_file):
     p.dump_solution(output_file)
 
 
+fh = open('Input.txt','r')
+ft = open('Output.txt','w')
 
+
+solve(fh,ft)
