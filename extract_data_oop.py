@@ -1,6 +1,5 @@
 class Input_Data():
 
-
     def __init__(self,fh):
         self.file = fh
         fh.seek(0,0)
