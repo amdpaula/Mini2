@@ -92,13 +92,16 @@ class Turmas(Input_Data):
 
 class Lecture():
 
-    def __init__(self,name,type,count):
+    def __init__(self,name,type,count,All_Courses,All_Types):
         self.name = name
+        self.courses = All_Courses
         self.type = type
+        self.types = All_Types
         self.count = count
         self.strung = ''
 
     def Print_Lecture(self):
+        self.tuple = (self.courses.index(self.name),self.types.index(self.type),self.count)
         self.strung = self.name+'_'+self.type+'_'+str(self.count)
         return self.strung
 
@@ -138,21 +141,23 @@ class Courses(Input_Data):
         classes = self.line.split(' ')
         for element in classes:
             y = element.split(',')
-            obj_class = Lecture(y[0],y[1],y[2])
+            obj_class = Lecture(y[0],y[1],int(y[2]),self.class_names,self.class_types)
             self.converted_classes.append(obj_class)
         return self.converted_classes                   #THIS IS A LIST OF LECTURE OBJECTS
 
 class Courses_to_Attend():
 
     def __init__(self,turma,Courses,All_Turmas):                  #THESE INPUT VARIABLES ARE THE LISTS OF ALL COURSES
-        self.
-
-        self.turma = turma                                           #AND TURMAS
+        self.turma = turma
+        self.all_courses = Courses
+        self.turmas = All_Turmas                                           #AND TURMAS
         self.courses = []
 
+    def add_Course(self,course):
+        self.courses.append(course)
 
     def Transform_To_Tuple(self):
-        self.turma
+        self.tuple = (self.turmas.index(self.turma),[self.all_courses.index(element) for element in self.courses])
 
 
 class Associations(Input_Data):
@@ -165,18 +170,17 @@ class Associations(Input_Data):
         self.courses = Courses
         self.turmas = Turmas
         self.list = []
-        print(self.associations)
-        for index,turma in enumerate(self.turmas):
-            self.list[index] = Courses_to_Attend(turma,self.Courses,self.turmas)
-        print()
-
-    def Create_Tables(self):
-        for association in self.associations:
-            for turma in self.turmas:
-                y = association.split(',')
+        for element in self.turmas:
+            self.list.append(Courses_to_Attend(element,Courses,Turmas))
 
 
-
+    def Create_Association_List(self):
+        for element in self.associations:
+            y = element.split(',')
+            index_turma = self.turmas.index(y[0])
+            course = y[1]
+            self.list[index_turma].add_Course(course)
+        return self.list
 
 fh = open('Input.txt','r')
 
@@ -197,17 +201,19 @@ rooms = data2.Show_Rooms()
 data3 = Turmas(fh)
 turmas = data3.Show_Turmas()
 
-#print(turmas)                                      #THIS IS WORKING FINE!
+print(turmas)                                      #THIS IS WORKING FINE!
 
 data4 = Courses(fh)
 class_names = data4.Get_Class_Names()
 class_types = data4.Get_Class_Types()
 converted_classes = data4.Convert_Classes()
 
-# print(class_names)                                 #THIS IS WORKING FINE!
+print(class_names)                                 #THIS IS WORKING FINE!
 # print(class_types)
-#
+
 # for element in converted_classes:
 #     print(element.Print_Lecture())
 
-data5 = Associations(fh,turmas)
+data5 = Associations(fh,class_names,turmas)
+associations = data5.Create_Association_List()
+print(associations)
