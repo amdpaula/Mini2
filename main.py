@@ -6,12 +6,12 @@ class Problem(csp.CSP):
     def __init__(self, fh):
 
         #TODO Write function that from filestream fh, sets variables, domains, graph, and constraints_function
-        
+
         super().__init__(variables, domains, graph, constraints_function)
 
 
     def dump_solution(self, fh):
-
+        return 1==1
 
         #TODO  Place here your code to write solution to opened file object fh
 
