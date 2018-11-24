@@ -1,3 +1,20 @@
+#graph-neighbours
+
+for var in [turma, name, type, i]:
+    for A in var:
+        for B in var:
+            if A != B:
+                if B not in neighbors[A]:
+                    neighbors[A].append(B)
+                if A not in neighbors[B]:
+                    neighbors[B].append(A)
+
+
+
+
+
+
+
 #constraints function
 
 
@@ -8,7 +25,12 @@ def constraints_function(A, a, B, b, associations):  #Há necessidade de recursi
         return b.day != a.day                   #teóricas não podem ser no mesmo dia assim
     if a.day == b.day and a.hour == b.hour:
         return A.turma != B.turma                                #different classes    MUDAR ESTA PARTE
-
+    #if ((A in Colors and B in Colors) or
+     #       (A in Pets and B in Pets) or
+     #       (A in Drinks and B in Drinks) or
+     #       (A in Countries and B in Countries) or
+     #       (A in Smokes and B in Smokes)):
+     #   return not same
     raise Exception('error')
 
 
