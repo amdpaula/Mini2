@@ -108,7 +108,6 @@ class Lecture():
         return self.strung
 
 
-
 class Courses(Input_Data):
 
     def __init__(self,fh):
@@ -193,6 +192,9 @@ class Domain_Value():
         return self.day+str(self.hour)+self.room
 
 
+
+
+
 class Problem(csp.CSP):
 
     def __init__(self, fh):
@@ -274,7 +276,8 @@ class Problem(csp.CSP):
                 return b.day != a.day  # teóricas não podem ser no mesmo dia assim
             if a.day == b.day and a.hour == b.hour:
                 return Aa.turma_set.intersection(Bb.turma_set) != Aa.turma_set  # CONFIRMAR ESTA PARTE    #different classes    MUDAR ESTA PARTE
-            raise Exception('error')
+            #raise Exception('error')
+            return True
 
 
 
