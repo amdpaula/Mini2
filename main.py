@@ -209,12 +209,12 @@ class Problem(csp.CSP):
 
         data4 = Courses(fh)
 
-        class_names = data4.Get_Class_Names()
-        class_types = data4.Get_Class_Types()
+        self.class_names = data4.Get_Class_Names()
+        self.class_types = data4.Get_Class_Types()
         converted_classes = data4.Convert_Classes()
 
-        data5 = Associations(fh, class_names, turmas)
-        associations = data5.Create_Association_List()
+        data5 = Associations(fh, self.class_names, turmas)
+        self.associations = data5.Create_Association_List()
 
         '''We have chosen as variables strings that are composed of the concatenation of various information
          for each lecture (e.g. Var1 = 'IASD_T_1') and so can be easily converted again into structured data
@@ -256,13 +256,13 @@ class Problem(csp.CSP):
         '''All previous work was done to simplify the following constraint function, and to improve its readibility as
         to make it easier to implement the constraints inherent in a schedule making problem.'''
 
-        def constraints_function(A, a, B, b, associations):  # Há necessidade de recursividade?
+        def constraints_function(A, a, B, b):  # Há necessidade de recursividade?
             aux = A.split('_')
-            A = Lecture(aux[0], aux[1], aux[2])
+            A = Lecture(aux[0], aux[1], aux[2],self.class_names,self.class_types)
             aux = B.split('_')
-            B = Lecture(aux[0], aux[1], aux[2])
+            B = Lecture(aux[0], aux[1], aux[2],self.class_names,self.class_types)
 
-            for x in associations:
+            for x in self.associations:
                 if x.course == A.name:
                     Aa = x
                 if x.course == B.name:
