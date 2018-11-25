@@ -1,13 +1,26 @@
 #graph-neighbours
 
-for var in [turma, name, type, i]:
-    for A in var:
-        for B in var:
-            if A != B:
-                if B not in neighbors[A]:
-                    neighbors[A].append(B)
-                if A not in neighbors[B]:
-                    neighbors[B].append(A)
+neighbours = {}
+
+for var in variables:
+
+    neighbours[var] = []
+
+    for element in variables:
+        if element == var:
+            continue
+        else:
+            neighbours[var].append(element)
+
+'''Another possible way to create the neighbours dictionary
+for A in var:
+    for B in var:
+        if A != B:
+            if B not in neighbors[A]:
+                neighbors[A].append(B)
+            if A not in neighbors[B]:
+                neighbors[B].append(A)
+'''
 
 
 

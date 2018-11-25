@@ -147,19 +147,17 @@ class Courses(Input_Data):
             self.converted_classes.append(obj_class)
         return self.converted_classes                   #THIS IS A LIST OF LECTURE OBJECTS
 
-class Courses_to_Attend():
+class Turmas_to_Attend():
 
-    def __init__(self,turma,Courses,All_Turmas):                  #THESE INPUT VARIABLES ARE THE LISTS OF ALL COURSES
-        self.turma = turma
-        self.all_courses = Courses
-        self.turmas = All_Turmas                                           #AND TURMAS
-        self.courses = []
+    def __init__(self,course,All_Courses,All_Turmas):                  #THESE INPUT VARIABLES ARE THE LISTS OF ALL COURSES
+        self.all_courses = All_Courses
+        self.all_turmas = All_Turmas
+        self.course = course                   #AND TURMAS
+        self.turmas_set = set()
 
-    def add_Course(self,course):
-        self.courses.append(course)
+    def add_turma(self,turma):
+        self.turmas_set.add(turma)
 
-    def Transform_To_Tuple(self):
-        self.tuple = (self.turmas.index(self.turma),[self.all_courses.index(element) for element in self.courses])
 
 
 class Associations(Input_Data):
@@ -169,19 +167,19 @@ class Associations(Input_Data):
         self.line_number = self.Find_Line('A')
         self.line = self.Extract_Line(self.line_number)
         self.associations = self.line.split(' ')
-        self.courses = Courses
-        self.turmas = Turmas
+        self.all_courses = Courses
+        self.all_turmas = Turmas
         self.list = []
-        for element in self.turmas:
-            self.list.append(Courses_to_Attend(element,Courses,Turmas))
+        for element in self.all_courses:
+            self.list.append(Turmas_to_Attend(element,Courses,Turmas))
 
 
     def Create_Association_List(self):              #TENHO LISTA DE TURMAS
         for element in self.associations:
             y = element.split(',')
-            index_turma = self.turmas.index(y[0])
-            course = y[1]
-            self.list[index_turma].add_Course(course)
+            index_course = self.all_courses.index(y[1])
+            course = y[0]
+            self.list[index_course].add_turma(course)
         return self.list
 
 class Problem(csp.CSP):
@@ -207,14 +205,26 @@ class Problem(csp.CSP):
         data5 = Associations(fh, class_names, turmas)
         associations = data5.Create_Association_List()
 
+        print(associations[0].course)
+        print(associations[0].turmas_set)
+
+        print(associations[1].course)
+        print(associations[1].turmas_set)
+
+        print(associations[2].course)
+        print(associations[2].turmas_set)
+
         variables = [element.Print_Lecture() for element in converted_classes]
 
-        domain = {}
+        domains = {}
 
         number_of_timeslots = len(time_slots)
-        number_of_rooms = len()
+        number_of_rooms = len(rooms)
 
+        '''Same domain for every variable, and so, it is better to define our list of possible values first
+        and then apply that domain for every variable'''
 
+        for
 
         super().__init__(variables, domains, graph, constraints_function)
 
