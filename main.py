@@ -296,7 +296,16 @@ class Problem(csp.CSP):
 
     def dump_solution(self, fh):
 
+        fh.truncate(0)
+        fh.seek(0,0)
 
+        for element in self.solution:
+            aux = element
+            aux.replace('_',',')
+            fh.write(aux+' ')
+            fh.write(self.solution[element].day+',')
+            fh.write(str(self.solution[element].hour)+' ')
+            fh.write(self.solution[element].room+'\n')
 
 
         #TODO  Place here your code to write solution to opened file object fh
