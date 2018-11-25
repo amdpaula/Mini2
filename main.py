@@ -182,13 +182,24 @@ class Associations(Input_Data):
             self.list[index_course].add_turma(course)
         return self.list
 
+class Domain_Value():
+
+    def __init__(self,day,hour,room):
+        self.day = day
+        self.hour = hour
+        self.room = room
+
+    def Print(self):
+        return self.day+str(self.hour)+self.room
+
+
 class Problem(csp.CSP):
 
     def __init__(self, fh):
         
         data1 = TimeSlots(fh)
         class_days = data1.Get_Class_Days()
-        time_slots = data1.Convert_TimeSlots()
+        time_slots = data1.Convert_TimeSlots()              #Returns a list of timeslot objects
 
         data2 = Rooms(fh)
         rooms = data2.Show_Rooms()
@@ -216,15 +227,30 @@ class Problem(csp.CSP):
 
         variables = [element.Print_Lecture() for element in converted_classes]
 
-        domains = {}
+        '''
+        neighbours = {}
 
-        number_of_timeslots = len(time_slots)
-        number_of_rooms = len(rooms)
+        for var in variables:
+
+            neighbours[var] = []
+
+            for element in variables:
+                if element == var:
+                    continue
+                else:
+                    neighbours[var].append(element)
+
+        print(neighbours)'''
+
+        list_of_possible_values = []
 
         '''Same domain for every variable, and so, it is better to define our list of possible values first
         and then apply that domain for every variable'''
 
-        for
+        for element in time_slots:
+            for var in rooms:
+                list_of_possible_values.append(Domain_Value(element.day_string,element.hour,var))
+
 
         super().__init__(variables, domains, graph, constraints_function)
 
