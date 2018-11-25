@@ -10,6 +10,7 @@ import itertools
 import re
 import random
 
+import sys
 
 class CSP(search.Problem):
     """This class describes finite-domain Constraint Satisfaction Problems.
@@ -271,6 +272,14 @@ def backtracking_search(csp,
         return None
 
     result = backtrack({})
+    print('crl')
+    '''for element in result:
+        print(element)
+        print(result[element].day)
+        print(result[element].hour)
+        print(result[element].room)
+        sys.stdout.flush()'''
+
     assert result is None or csp.goal_test(result)
     return result
 

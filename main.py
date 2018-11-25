@@ -265,17 +265,24 @@ class Problem(csp.CSP):
             B = Lecture(aux[0], aux[1], aux[2],self.class_names,self.class_types)
 
             for x in self.associations:
+
                 if x.course == A.name:
                     Aa = x
+                    #print(Aa.course)
                 if x.course == B.name:
                     Bb = x
+                    #print(Bb.course)
 
-            if a.hour == b.hour and a.day == b.day:  # same room occupied at the same time
-                return a.room != b.room
-            if A.name == B.name and A.type == B.type:
-                return b.day != a.day  # teóricas não podem ser no mesmo dia assim
-            if a.day == b.day and a.hour == b.hour:
-                return Aa.turma_set.intersection(Bb.turma_set) != Aa.turma_set  # CONFIRMAR ESTA PARTE    #different classes    MUDAR ESTA PARTE
+            if a.hour == b.hour and a.day == b.day and a.room == b.room:  # same room occupied at the same time
+                return False
+            if A.name == B.name and A.type == B.type and b.day == a.day:
+                return False  # teóricas não podem ser no mesmo dia assim
+            if a.day == b.day and a.hour == b.hour and Aa.turmas_set.intersection(Bb.turmas_set) != set():
+                #print('1\n')
+                #print(Aa.turmas_set.intersection(Bb.turmas_set))
+                #print(Aa.turmas_set)
+                #print(Bb.turmas_set)
+                return False  # CONFIRMAR ESTA PARTE    #different classes    MUDAR ESTA PARTE
             #raise Exception('error')
             return True
 
@@ -302,6 +309,7 @@ def solve(input_file, output_file):
         print(test[element].day)
         print(test[element].hour)
         print(test[element].room)
+        print('\n')
 
     p.dump_solution(output_file)
 
