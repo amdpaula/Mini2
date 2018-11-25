@@ -198,7 +198,8 @@ class Domain_Value():
 class Problem(csp.CSP):
 
     def __init__(self, fh):
-        
+
+        self.solution = dict()
         data1 = TimeSlots(fh)
         class_days = data1.Get_Class_Days()
         time_slots = data1.Convert_TimeSlots()              #Returns a list of timeslot objects
@@ -295,20 +296,20 @@ class Problem(csp.CSP):
 
     def dump_solution(self, fh):
 
-        return True
+
 
 
         #TODO  Place here your code to write solution to opened file object fh
 
 def solve(input_file, output_file):
     p = Problem(input_file)
-    test = csp.backtracking_search(p)
+    p.solution = csp.backtracking_search(p)
 
-    for element in test:
+    for element in p.solution:
         print(element)
-        print(test[element].day)
-        print(test[element].hour)
-        print(test[element].room)
+        print(p.solution[element].day)
+        print(p.solution[element].hour)
+        print(p.solution[element].room)
         print('\n')
 
     p.dump_solution(output_file)
