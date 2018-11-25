@@ -289,12 +289,20 @@ class Problem(csp.CSP):
     def dump_solution(self, fh):
 
         return True
+
+
         #TODO  Place here your code to write solution to opened file object fh
 
 def solve(input_file, output_file):
     p = Problem(input_file)
     test = csp.backtracking_search(p)
-    #print()
+
+    for element in test:
+        print(element)
+        print(test[element].day)
+        print(test[element].hour)
+        print(test[element].room)
+
     p.dump_solution(output_file)
 
 
