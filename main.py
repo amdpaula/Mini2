@@ -185,9 +185,9 @@ class Associations(Input_Data):
 class Domain_Value():
 
     def __init__(self,day,hour,room):
-        self.day = day
-        self.hour = hour
-        self.room = room
+        self.day = day      #string
+        self.hour = hour    #int
+        self.room = room    #string
 
     def Print(self):
         return self.day+str(self.hour)+self.room
@@ -262,12 +262,12 @@ class Problem(csp.CSP):
 
 def solve(input_file, output_file):
     p = Problem(input_file)
-    # Place here your code that calls function csp.backtracking_search(self, ...)
+    csp.backtracking_search(p)
     p.dump_solution(output_file)
 
 
-fh = open('Input.txt','r')
-ft = open('Output.txt','w')
+#fh = open('Input.txt','r')
+#ft = open('Output.txt','w')
 
 
-solve(fh,ft)
+#solve(fh,ft)
