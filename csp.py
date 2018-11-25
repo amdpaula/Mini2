@@ -671,6 +671,7 @@ def Zebra():
                 Norwegian: Blue; Winston: Snails; LuckyStrike: OJ;
                 Ukranian: Tea; Japanese: Parliaments; Kools: Horse;
                 Coffee: Green; Green: Ivory""", variables)
+    print(neighbors)
     for type in [Colors, Pets, Drinks, Countries, Smokes]:
         for A in type:
             for B in type:
