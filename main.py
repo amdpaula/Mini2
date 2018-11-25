@@ -294,7 +294,7 @@ class Problem(csp.CSP):
 def solve(input_file, output_file):
     p = Problem(input_file)
     test = csp.backtracking_search(p)
-    print(test)
+    #print()
     p.dump_solution(output_file)
 
 
