@@ -32,6 +32,10 @@ for A in var:
 
 
 def constraints_function(A, a, B, b, associations):  #Há necessidade de recursividade?
+    A = 'IASD_T_1'
+
+    A.split('_')
+
     if a.hour == b.hour and a.day == b.day:        #same room occupied at the same time
         return a.room != b.room
     if A.name == B.name and A.type == B.type:

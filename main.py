@@ -216,40 +216,48 @@ class Problem(csp.CSP):
         data5 = Associations(fh, class_names, turmas)
         associations = data5.Create_Association_List()
 
-        print(associations[0].course)
-        print(associations[0].turmas_set)
-
-        print(associations[1].course)
-        print(associations[1].turmas_set)
-
-        print(associations[2].course)
-        print(associations[2].turmas_set)
+        '''We have chosen as variables strings that are composed of the concatenation of various information
+         for each lecture (e.g. Var1 = 'IASD_T_1') and so can be easily converted again into structured data
+         using the Lecture class (this is useful to improve readability in the constraints function'''
 
         variables = [element.Print_Lecture() for element in converted_classes]
 
-        '''
-        neighbours = {}
-
-        for var in variables:
-
-            neighbours[var] = []
-
-            for element in variables:
-                if element == var:
-                    continue
-                else:
-                    neighbours[var].append(element)
-
-        print(neighbours)'''
-
         list_of_possible_values = []
 
-        '''Same domain for every variable, and so, it is better to define our list of possible values first
+        '''We have the same domain for every variable, and so, it is better to define our list of possible values first
         and then apply that domain for every variable'''
 
         for element in time_slots:
             for var in rooms:
-                list_of_possible_values.append(Domain_Value(element.day_string,element.hour,var))
+                list_of_possible_values.append(Domain_Value(element.day_string, element.hour, var))
+
+        '''We can utilize the class defined in the csp.py module as all our variables are going to have the same domain
+        to create an universal dictionary'''
+
+        domains = csp.UniversalDict(list_of_possible_values)
+
+        '''The graph variable is a dictionary where each key is a CSP variable and the value associated with the key is
+        a list of the other CSP variables that are involved in constraints with the key variable. When including all 
+        possible rooms in the domain for a possible CSP variable assignment, one can infer that all variables are
+        involved in constraints with other variables - any two lecture cannot occur at the same time in the same room.'''
+
+
+        graph = {}
+
+        for var in variables:
+            graph[var] = []
+            for element in variables:
+                if element == var:
+                    continue
+                else:
+                    graph[var].append(element)
+
+
+        '''All previous work was done to simplify the following constraint function, and to improve its readibility as
+        to make it easier to implement the constraints inherent in a schedule making problem.'''
+
+
+
 
 
         super().__init__(variables, domains, graph, constraints_function)
