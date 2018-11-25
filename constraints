@@ -1,47 +1,27 @@
-#graph-neighbours
-
-neighbours = {}
-
-for var in variables:
-
-    neighbours[var] = []
-
-    for element in variables:
-        if element == var:
-            continue
-        else:
-            neighbours[var].append(element)
-
-'''Another possible way to create the neighbours dictionary
-for A in var:
-    for B in var:
-        if A != B:
-            if B not in neighbors[A]:
-                neighbors[A].append(B)
-            if A not in neighbors[B]:
-                neighbors[B].append(A)
-'''
-
-
-
-
-
-
 
 #constraints function
 
 
 def constraints_function(A, a, B, b, associations):  #Há necessidade de recursividade?
-    A = 'IASD_T_1'
+    aux=A.split('_')
+    A = main.Lecture(aux[0], aux[1], aux[2])
+    aux=B.split('_')
+    B = main.Lecture(aux[0], aux[1], aux[2])
 
-    A.split('_')
+
+
+    for x in associations:
+        if x.course==A.name:
+            Aa=x
+        if x.course==B.name:
+            Bb=x
 
     if a.hour == b.hour and a.day == b.day:        #same room occupied at the same time
         return a.room != b.room
     if A.name == B.name and A.type == B.type:
         return b.day != a.day                   #teóricas não podem ser no mesmo dia assim
     if a.day == b.day and a.hour == b.hour:
-        return A.turma != B.turma                                #different classes    MUDAR ESTA PARTE
+        return Aa.turma_set.intersection(Bb.turma_set) != Aa.turma_set    #CONFIRMAR ESTA PARTE                                #different classes    MUDAR ESTA PARTE
     raise Exception('error')
 
 
