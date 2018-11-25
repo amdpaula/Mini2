@@ -4,9 +4,9 @@
 
 def constraints_function(A, a, B, b, associations):  #Há necessidade de recursividade?
     aux=A.split('_')
-    A = main.Lecture(aux[0], aux[1], aux[2])
+    A = Lecture(aux[0], aux[1], aux[2])
     aux=B.split('_')
-    B = main.Lecture(aux[0], aux[1], aux[2])
+    B = Lecture(aux[0], aux[1], aux[2])
 
 
 
