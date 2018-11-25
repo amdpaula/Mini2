@@ -273,8 +273,7 @@ class Problem(csp.CSP):
             if A.name == B.name and A.type == B.type:
                 return b.day != a.day  # teóricas não podem ser no mesmo dia assim
             if a.day == b.day and a.hour == b.hour:
-                return Aa.turma_set.intersection(
-                    Bb.turma_set) != Aa.turma_set  # CONFIRMAR ESTA PARTE                                #different classes    MUDAR ESTA PARTE
+                return Aa.turma_set.intersection(Bb.turma_set) != Aa.turma_set  # CONFIRMAR ESTA PARTE    #different classes    MUDAR ESTA PARTE
             raise Exception('error')
 
 
@@ -291,12 +290,13 @@ class Problem(csp.CSP):
 
 def solve(input_file, output_file):
     p = Problem(input_file)
-    csp.backtracking_search(p)
+    test = csp.backtracking_search(p)
+    print(test)
     p.dump_solution(output_file)
 
 
-#fh = open('Input.txt','r')
-#ft = open('Output.txt','w')
+fh = open('Input.txt','r')
+ft = open('Output.txt','w')
 
 
-#solve(fh,ft)
+solve(fh,ft)
