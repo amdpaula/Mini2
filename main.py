@@ -163,13 +163,13 @@ class Courses(Input_Data):
 
 
 '''This object is very important in the implementation of the constraints function. To implement the constraint that two
- lectures that a student class needs to attend cannot occur at the same time, we have keep information on which courses are
+ lectures that a student class needs to attend cannot occur at the same time, we have to keep information about which courses are
  attended by which student classes. And so we implemented this object, where an attribute defines the course for which the
  object is referring to, and a set of student classes that need to attend the lectures of the given course.'''
 
 class Turmas_to_Attend():
 
-    def __init__(self,course,All_Courses,All_Turmas):                  #THESE INPUT VARIABLES ARE THE LISTS OF ALL COURSES
+    def __init__(self,course,All_Courses,All_Turmas):                  #THESE INPUT VARIABLES ARE THE LISTS OF ALL COURSES AND ALL TURMAS
         self.all_courses = All_Courses
         self.all_turmas = All_Turmas
         self.course = course
@@ -303,8 +303,9 @@ class Problem(csp.CSP):
                 return False
             if Var1.name == Var2.name and Var1.type == Var2.type and b.day == a.day:    #Cannot have the same type of class for a course repeated in a single day
                 return False
-            if a.day == b.day and a.hour == b.hour and Turmas_Var1.turmas_set & Turmas_Var2.turmas_set != set():
+            if a.day == b.day and a.hour == b.hour and (Turmas_Var1.turmas_set & Turmas_Var2.turmas_set != set()):
                 return False  # CONFIRMAR ESTA PARTE    #different classes    MUDAR ESTA PARTE
+            #TODO For optimization, add another constraint here to limit the timeslots
 
             return True
 
