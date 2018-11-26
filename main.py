@@ -1,6 +1,7 @@
 '''
 IASD - Mini-Project 2 - Constraint Satisfaction Problems - November of 2018
 Implemented by:
+Group 20
 Pedro Valdeira 81227
 Guilherme Saraiva 81445
 António Matos 81529
