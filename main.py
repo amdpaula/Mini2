@@ -332,7 +332,7 @@ def solve(input_file, output_file):
     p.solution = csp.backtracking_search(p) #if there is no solution p.solution=NoneType object
 
     #TODO Optimization is done here!
-    if p.solution != None:
+    if p.solution is None:
         p.dump_solution(output_file)
     else:
         return print('No solution was found')
