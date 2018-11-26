@@ -24,14 +24,11 @@ class TimeSlot():
         self.days_of_week = Week                            #All possible weekdays
 
 
-    def Set_Day_Hour(self,day,hour):                        #Input variable 'day' is a string
+    def Set_Day_Hour(self,day,hour):                        #Input variables - 'day' is a string; 'hour' is a string
         self.day = self.days_of_week.index(day)
         self.day_string = self.days_of_week[self.day]
-        self.hour = int(hour)                               #Input variable 'hour' is a string
+        self.hour = int(hour)
         self.tuple = (self.day,self.hour)
-
-    def Print_TimeSlot_Tuple(self):
-        return self.tuple
 
     def Print_TimeSlot_Struct(self):
         self.string = self.day_string+','+str(self.hour)
@@ -63,10 +60,6 @@ class TimeSlots(Input_Data):
             obj_time_slot.Set_Day_Hour(y[0],y[1])
             self.converted_timeslots.append(obj_time_slot)      #LIST OF TIMESLOT OBJECTS
         return self.converted_timeslots
-
-    def Show_TimeSlots(self):
-        for element in self.converted_timeslots:
-            element.Print_TimeSlot_Tuple()
 
 class Rooms(Input_Data):
 

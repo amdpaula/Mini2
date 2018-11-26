@@ -272,7 +272,6 @@ def backtracking_search(csp,
         return None
 
     result = backtrack({})
-    print('crl')
     '''for element in result:
         print(element)
         print(result[element].day)

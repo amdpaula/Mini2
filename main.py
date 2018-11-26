@@ -1,4 +1,16 @@
+'''
+IASD - Mini-Project 2 - Constraint Satisfaction Problems - November of 2018
+Implemented by:
+Pedro Valdeira 81227
+Guilherme Saraiva 81445
+António Matos 81529
+'''
+
+
 import csp
+
+'''The class below 'Input_Data' will not be instantiated, it is an abstract class, but that will allow the reading of the
+filestream by other derived classes in a more modular way. '''
 
 class Input_Data():
 
@@ -7,15 +19,20 @@ class Input_Data():
         fh.seek(0,0)
         self.data = self.file.readlines()
 
-    def Find_Line(self,char):
+    def Find_Line(self,char):                       #Finds the line in the file which contains begins with 'char' character
         for index,line in enumerate(self.data):
             test = line[0]
             if test == char:
                 return index
 
-    def Extract_Line(self,line_number):
-        line = self.data[line_number]
+    def Extract_Line(self,line_number):             #Returns a single line of the file as a string, but having already removed
+        line = self.data[line_number]               #the indicator character and the EOF character
         return line[2:-1]
+
+'''Class 'TimeSlot' implements the objects which will hold the data pertaining to a certain time slot and so have an
+attribute to hold the day of the week in which the timeslot is, and another attribute to save the hour in which the
+timeslot is. The two methods implemented (besides __init__) are simple methods to set the attributes to the desired
+values and retrieve the information as a string'''
 
 class TimeSlot():
 
@@ -30,14 +47,15 @@ class TimeSlot():
         self.day = self.days_of_week.index(day)
         self.day_string = self.days_of_week[self.day]
         self.hour = int(hour)                               #Input variable 'hour' is a string
-        self.tuple = (self.day,self.hour)
-
-    def Print_TimeSlot_Tuple(self):
-        return self.tuple
 
     def Print_TimeSlot_Struct(self):
         self.string = self.day_string+','+str(self.hour)
         return self.string
+
+'''This next class 'TimeSlots' inherits from the class Input_Data to be able to read the timeslot line from the text file.
+Its main purpose is to create a list of TimeSlot objects in order to more easily build the domain of the CSP problem.
+This list is the attribute self.converted_timeslots. The method Get_Class_Days needs to run first before running
+the method that actually builds the list of TimeSlot objects.'''
 
 class TimeSlots(Input_Data):
 
@@ -65,10 +83,6 @@ class TimeSlots(Input_Data):
             obj_time_slot.Set_Day_Hour(y[0],y[1])
             self.converted_timeslots.append(obj_time_slot)      #LIST OF TIMESLOT OBJECTS
         return self.converted_timeslots
-
-    def Show_TimeSlots(self):
-        for element in self.converted_timeslots:
-            element.Print_TimeSlot_Tuple()
 
 class Rooms(Input_Data):
 
@@ -146,18 +160,28 @@ class Courses(Input_Data):
             self.converted_classes.append(obj_class)
         return self.converted_classes                   #THIS IS A LIST OF LECTURE OBJECTS
 
+
+'''This object is very important in the implementation of the constraints function. To implement the constraint that two
+ lectures that a student class needs to attend cannot occur at the same time, we have keep information on which courses are
+ attended by which student classes. And so we implemented this object, where an attribute defines the course for which the
+ object is referring to, and a set of student classes that need to attend the lectures of the given course.'''
+
 class Turmas_to_Attend():
 
     def __init__(self,course,All_Courses,All_Turmas):                  #THESE INPUT VARIABLES ARE THE LISTS OF ALL COURSES
         self.all_courses = All_Courses
         self.all_turmas = All_Turmas
-        self.course = course                   #AND TURMAS
+        self.course = course
         self.turmas_set = set()
 
     def add_turma(self,turma):
         self.turmas_set.add(turma)
 
 
+'''Associations Class inherits from the 'Input_Data' class as to be able to also find and extract the desired line from 
+the filestream that it receives when instantiated. Its main purpose is to build a list of objects of the class above
+'Turmas_to_Attend' and have so a list that makes available in a structured form, a list of the student classes (turmas)
+that need to attend a given course'''
 
 class Associations(Input_Data):
 
@@ -181,6 +205,11 @@ class Associations(Input_Data):
             self.list[index_course].add_turma(course)
         return self.list
 
+'''This next class 'Domain_Value' was created in order to hold the data pertaining to the possible assignments for each
+variable (the lecture to be placed in the schedule) and so must have an attribute for the day of the lecture, an attribute
+for the hour at which the lecture occurs, and an attribute for the room where the lecture occurs. A simple 'Print' method
+was implemented for testing and debugging purposes'''
+
 class Domain_Value():
 
     def __init__(self,day,hour,room):
@@ -192,14 +221,11 @@ class Domain_Value():
         return self.day+str(self.hour)+self.room
 
 
-
-
-
 class Problem(csp.CSP):
 
     def __init__(self, fh):
 
-        self.solution = dict()
+        self.solution = dict()                              #Empty dictionary that will hold the solution to the CSP problem
         data1 = TimeSlots(fh)
         class_days = data1.Get_Class_Days()
         time_slots = data1.Convert_TimeSlots()              #Returns a list of timeslot objects
@@ -221,7 +247,7 @@ class Problem(csp.CSP):
 
         '''We have chosen as variables strings that are composed of the concatenation of various information
          for each lecture (e.g. Var1 = 'IASD_T_1') and so can be easily converted again into structured data
-         using the Lecture class (this is useful to improve readability in the constraints function'''
+         using the Lecture class (this is useful to improve readability in the constraints function)'''
 
         variables = [element.Print_Lecture() for element in converted_classes]
 
@@ -235,14 +261,14 @@ class Problem(csp.CSP):
                 list_of_possible_values.append(Domain_Value(element.day_string, element.hour, var))
 
         '''We can utilize the class defined in the csp.py module as all our variables are going to have the same domain
-        to create an universal dictionary'''
+        to create an universal dictionary (maps all the keys to the same value, in this case the list above)'''
 
         domains = csp.UniversalDict(list_of_possible_values)
 
         '''The graph variable is a dictionary where each key is a CSP variable and the value associated with the key is
         a list of the other CSP variables that are involved in constraints with the key variable. When including all 
         possible rooms in the domain for a possible CSP variable assignment, one can infer that all variables are
-        involved in constraints with other variables - any two lecture cannot occur at the same time in the same room.'''
+        involved in constraints with all other variables as any two lectures cannot occur at the same time in the same room.'''
 
 
         graph = {}
@@ -256,50 +282,40 @@ class Problem(csp.CSP):
                     graph[var].append(element)
 
 
-        '''All previous work was done to simplify the following constraint function, and to improve its readibility as
-        to make it easier to implement the constraints inherent in a schedule making problem.'''
+        '''All previous work was done to simplify the following constraint function, and to improve its readability as to
+        make it easier to implement the constraints inherent in a schedule making problem.'''
 
-        def constraints_function(A, a, B, b):  # Há necessidade de recursividade?
-            aux = A.split('_')
-            A = Lecture(aux[0], aux[1], aux[2],self.class_names,self.class_types)
-            aux = B.split('_')
-            B = Lecture(aux[0], aux[1], aux[2],self.class_names,self.class_types)
+        def constraints_function(Var1, a, Var2, b):
+            aux = Var1.split('_')
+            Var1 = Lecture(aux[0], aux[1], aux[2], self.class_names, self.class_types) #Place information in Lecture object
+            aux = Var2.split('_')
+            Var2 = Lecture(aux[0], aux[1], aux[2], self.class_names, self.class_types) #Place information in Lecture object
 
             for x in self.associations:
 
-                if x.course == A.name:
-                    Aa = x
-                    #print(Aa.course)
-                if x.course == B.name:
-                    Bb = x
-                    #print(Bb.course)
+                if x.course == Var1.name:
+                    Turmas_Var1 = x                                                     #An instance of the Turmas_to_attend object
+                if x.course == Var2.name:
+                    Turmas_Var2 = x                                                     #Another instance of the Turmas_to_attend_object but for the second CSP var
 
-            if a.hour == b.hour and a.day == b.day and a.room == b.room:  # same room occupied at the same time
+            if a.hour == b.hour and a.day == b.day and a.room == b.room:                #Cannot have the same room occupied at the same time
                 return False
-            if A.name == B.name and A.type == B.type and b.day == a.day:
-                return False  # teóricas não podem ser no mesmo dia assim
-            if a.day == b.day and a.hour == b.hour and Aa.turmas_set.intersection(Bb.turmas_set) != set():
-                #print('1\n')
-                #print(Aa.turmas_set.intersection(Bb.turmas_set))
-                #print(Aa.turmas_set)
-                #print(Bb.turmas_set)
+            if Var1.name == Var2.name and Var1.type == Var2.type and b.day == a.day:    #Cannot have the same type of class for a course repeated in a single day
+                return False
+            if a.day == b.day and a.hour == b.hour and Turmas_Var1.turmas_set & Turmas_Var2.turmas_set != set():
                 return False  # CONFIRMAR ESTA PARTE    #different classes    MUDAR ESTA PARTE
-            #raise Exception('error')
+
             return True
-
-
-
-
 
         super().__init__(variables, domains, graph, constraints_function)
 
 
     def dump_solution(self, fh):
 
-        fh.truncate(0)
-        fh.seek(0,0)
+        fh.truncate(0)                      #Clean File
+        fh.seek(0,0)                        #Place pointer in the beginning of the file
 
-        for element in self.solution:
+        for element in self.solution:       #The solution attribute of the problem object is a dictionary containing the assignment that satisfies the CSP
             aux = element
             aux.replace('_',',')
             fh.write(aux+' ')
@@ -308,18 +324,11 @@ class Problem(csp.CSP):
             fh.write(self.solution[element].room+'\n')
 
 
-        #TODO  Place here your code to write solution to opened file object fh
-
 def solve(input_file, output_file):
     p = Problem(input_file)
     p.solution = csp.backtracking_search(p)
 
-    for element in p.solution:
-        print(element)
-        print(p.solution[element].day)
-        print(p.solution[element].hour)
-        print(p.solution[element].room)
-        print('\n')
+    #TODO Optimization is done here!
 
     p.dump_solution(output_file)
 
