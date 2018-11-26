@@ -12,6 +12,8 @@ import random
 
 import sys
 
+#toni da pilinha pequena
+
 class CSP(search.Problem):
     """This class describes finite-domain Constraint Satisfaction Problems.
     A CSP is specified by the following inputs:
