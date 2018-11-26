@@ -227,24 +227,24 @@ class Problem(csp.CSP):
     def __init__(self, fh):
 
         self.solution = dict()                              #Empty dictionary that will hold the solution to the CSP problem
-        data1 = TimeSlots(fh)
-        class_days = data1.Get_Class_Days()
-        time_slots = data1.Convert_TimeSlots()              #Returns a list of timeslot objects
+        List_of_TimeSlots = TimeSlots(fh)
+        class_days = List_of_TimeSlots.Get_Class_Days()
+        time_slots = List_of_TimeSlots.Convert_TimeSlots()              #Returns a list of timeslot objects
 
-        data2 = Rooms(fh)
-        rooms = data2.Show_Rooms()
+        List_of_Rooms_obj = Rooms(fh)
+        rooms = List_of_Rooms_obj.Show_Rooms()
 
-        data3 = Turmas(fh)
-        turmas = data3.Show_Turmas()
+        List_of_Turmas_obj = Turmas(fh)
+        turmas = List_of_Turmas_obj.Show_Turmas()
 
-        data4 = Courses(fh)
+        List_of_Courses_objs = Courses(fh)
 
-        self.class_names = data4.Get_Class_Names()
-        self.class_types = data4.Get_Class_Types()
-        converted_classes = data4.Convert_Classes()
+        self.class_names = List_of_Courses_objs.Get_Class_Names()
+        self.class_types = List_of_Courses_objs.Get_Class_Types()
+        converted_classes = List_of_Courses_objs.Convert_Classes()      #'converted_classes' is a list of Lecture objects
 
-        data5 = Associations(fh, self.class_names, turmas)
-        self.associations = data5.Create_Association_List()
+        List_of_Associations = Associations(fh, self.class_names, turmas)
+        self.associations = List_of_Associations.Create_Association_List()
 
         '''We have chosen as variables strings that are composed of the concatenation of various information
          for each lecture (e.g. Var1 = 'IASD_T_1') and so can be easily converted again into structured data
@@ -305,6 +305,7 @@ class Problem(csp.CSP):
                 return False
             if a.day == b.day and a.hour == b.hour and (Turmas_Var1.turmas_set & Turmas_Var2.turmas_set != set()):
                 return False  # CONFIRMAR ESTA PARTE    #different classes    MUDAR ESTA PARTE
+
             #TODO For optimization, add another constraint here to limit the timeslots
 
             return True
@@ -328,14 +329,17 @@ class Problem(csp.CSP):
 
 def solve(input_file, output_file):
     p = Problem(input_file)
-    p.solution = csp.backtracking_search(p)
+    p.solution = csp.backtracking_search(p) #if there is no solution p.solution=NoneType object
 
     #TODO Optimization is done here!
+    if p.solution != None:
+        p.dump_solution(output_file)
+    else:
+        return print('No solution was found')
 
-    p.dump_solution(output_file)
 
 
-fh = open('Input.txt','r')
+fh = open('Input.txt','r') #For testing purposes
 ft = open('Output.txt','w')
 
 
