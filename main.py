@@ -224,9 +224,10 @@ class Domain_Value():
 
 class Problem(csp.CSP):
 
-    def __init__(self, fh):
+    def __init__(self, fh,b=None):
 
         self.solution = dict()                              #Empty dictionary that will hold the solution to the CSP problem
+        self.cost_of_solution = b
         List_of_TimeSlots = TimeSlots(fh)
         class_days = List_of_TimeSlots.Get_Class_Days()
         time_slots = List_of_TimeSlots.Convert_TimeSlots()              #Returns a list of timeslot objects
@@ -305,10 +306,16 @@ class Problem(csp.CSP):
                 return False
             if a.day == b.day and a.hour == b.hour and (Turmas_Var1.turmas_set & Turmas_Var2.turmas_set != set()):
                 return False  # CONFIRMAR ESTA PARTE    #different classes    MUDAR ESTA PARTE
-
+            if self.cost_of_solution is None:
+                return True
+            else:
+                if (a.hour and b.hour)>self.cost_of_solution:
+                    return False
+                else:
+                    return True
             #TODO For optimization, add another constraint here to limit the timeslots
 
-            return True
+
 
         super().__init__(variables, domains, graph, constraints_function)
 
