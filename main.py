@@ -229,11 +229,11 @@ class Problem(csp.CSP):
         self.solution = dict()                              #Empty dictionary that will hold the solution to the CSP problem
         self.cost_of_solution = b
         List_of_TimeSlots = TimeSlots(fh)
-        class_days = List_of_TimeSlots.Get_Class_Days()
-        time_slots = List_of_TimeSlots.Convert_TimeSlots()              #Returns a list of timeslot objects
+        self.class_days = List_of_TimeSlots.Get_Class_Days()
+        self.time_slots = List_of_TimeSlots.Convert_TimeSlots()              #Returns a list of timeslot objects
 
         List_of_Rooms_obj = Rooms(fh)
-        rooms = List_of_Rooms_obj.Show_Rooms()
+        self.rooms = List_of_Rooms_obj.Show_Rooms()
 
         List_of_Turmas_obj = Turmas(fh)
         turmas = List_of_Turmas_obj.Show_Turmas()
@@ -258,8 +258,8 @@ class Problem(csp.CSP):
         '''We have the same domain for every variable, and so, it is better to define our list of possible values first
         and then apply that domain for every variable'''
 
-        for element in time_slots:
-            for var in rooms:
+        for element in self.time_slots:
+            for var in self.rooms:
                 list_of_possible_values.append(Domain_Value(element.day_string, element.hour, var))
 
         '''We can utilize the class defined in the csp.py module as all our variables are going to have the same domain
@@ -306,14 +306,13 @@ class Problem(csp.CSP):
                 return False
             if a.day == b.day and a.hour == b.hour and (Turmas_Var1.turmas_set & Turmas_Var2.turmas_set != set()):
                 return False  # CONFIRMAR ESTA PARTE    #different classes    MUDAR ESTA PARTE
-            if self.cost_of_solution is None:
+            if self.cost_of_solution is None:               #Implementation without optimization
                 return True
             else:
                 if (a.hour and b.hour)>self.cost_of_solution:
                     return False
                 else:
                     return True
-            #TODO For optimization, add another constraint here to limit the timeslots
 
 
 
@@ -334,20 +333,33 @@ class Problem(csp.CSP):
             fh.write(self.solution[element].room+'\n')
 
 
-def solve(input_file, output_file):
+def solve(input_file, output_file,output_file_with_opt):
     p = Problem(input_file)
-    p.solution = csp.backtracking_search(p) #if there is no solution p.solution=NoneType object
-
-    #TODO Optimization is done here!
-    if p.solution is None:
+    p.solution = csp.backtracking_search(p) #if there is no solution p.solution=NoneType object.
+                                            #If a solution exists, p.solution is a dictionary where the values, are domain objects.
+    if p.solution is not None:              #Verification that solution is possible
         p.dump_solution(output_file)
     else:
         return print('No solution was found')
 
+    #Optimization:
+    latest_timeslot = max(p.solution[element].hour for element in p.solution)
 
+    print(latest_timeslot)
+
+    p.cost_of_solution = latest_timeslot
+
+    while p.solution is not None:
+        aux = p.solution
+        p.cost_of_solution = p.cost_of_solution - 1
+        p.solution = csp.backtracking_search(p)
+
+    p.solution = aux
+    p.dump_solution(output_file_with_opt)
 
 fh = open('Input.txt','r') #For testing purposes
 ft = open('Output.txt','w')
+fo = open('Output_with_Optimization.txt','w')
 
 
-solve(fh,ft)
+solve(fh,ft,fo)
