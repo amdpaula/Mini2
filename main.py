@@ -224,7 +224,7 @@ class Domain_Value():
 
 class Problem(csp.CSP):
 
-    def __init__(self, fh,b=None):
+    def __init__(self, fh, b = None):
 
         self.solution = dict()                              #Empty dictionary that will hold the solution to the CSP problem
         self.cost_of_solution = b
@@ -251,21 +251,21 @@ class Problem(csp.CSP):
          for each lecture (e.g. Var1 = 'IASD_T_1') and so can be easily converted again into structured data
          using the Lecture class (this is useful to improve readability in the constraints function)'''
 
-        variables = [element.Print_Lecture() for element in converted_classes]
+        self.variables = [element.Print_Lecture() for element in converted_classes]
 
-        list_of_possible_values = []
+        self.list_of_possible_values = []
 
         '''We have the same domain for every variable, and so, it is better to define our list of possible values first
         and then apply that domain for every variable'''
 
         for element in self.time_slots:
             for var in self.rooms:
-                list_of_possible_values.append(Domain_Value(element.day_string, element.hour, var))
+                self.list_of_possible_values.append(Domain_Value(element.day_string, element.hour, var))
 
         '''We can utilize the class defined in the csp.py module as all our variables are going to have the same domain
         to create an universal dictionary (maps all the keys to the same value, in this case the list above)'''
 
-        domains = csp.UniversalDict(list_of_possible_values)
+        self.domains = csp.UniversalDict(self.list_of_possible_values)
 
         '''The graph variable is a dictionary where each key is a CSP variable and the value associated with the key is
         a list of the other CSP variables that are involved in constraints with the key variable. When including all 
@@ -273,15 +273,15 @@ class Problem(csp.CSP):
         involved in constraints with all other variables as any two lectures cannot occur at the same time in the same room.'''
 
 
-        graph = {}
+        self.graph = {}
 
-        for var in variables:
-            graph[var] = []
-            for element in variables:
+        for var in self.variables:
+            self.graph[var] = []
+            for element in self.variables:
                 if element == var:
                     continue
                 else:
-                    graph[var].append(element)
+                    self.graph[var].append(element)
 
 
         '''All previous work was done to simplify the following constraint function, and to improve its readability as to
@@ -309,14 +309,14 @@ class Problem(csp.CSP):
             if self.cost_of_solution is None:               #Implementation without optimization
                 return True
             else:
-                if (a.hour and b.hour)>self.cost_of_solution:
+                if (a.hour or b.hour)>self.cost_of_solution:
                     return False
                 else:
                     return True
 
 
 
-        super().__init__(variables, domains, graph, constraints_function)
+        super().__init__(self.variables, self.domains, self.graph, constraints_function)
 
 
     def dump_solution(self, fh):
@@ -326,14 +326,14 @@ class Problem(csp.CSP):
 
         for element in self.solution:       #The solution attribute of the problem object is a dictionary containing the assignment that satisfies the CSP
             aux = element
-            aux.replace('_',',')
+            aux = aux.replace('_',',')
             fh.write(aux+' ')
             fh.write(self.solution[element].day+',')
             fh.write(str(self.solution[element].hour)+' ')
             fh.write(self.solution[element].room+'\n')
 
 
-def solve(input_file, output_file,output_file_with_opt):
+def solve(input_file, output_file):
     p = Problem(input_file)
     p.solution = csp.backtracking_search(p) #if there is no solution p.solution=NoneType object.
                                             #If a solution exists, p.solution is a dictionary where the values, are domain objects.
@@ -351,15 +351,21 @@ def solve(input_file, output_file,output_file_with_opt):
 
     while p.solution is not None:
         aux = p.solution
-        p.cost_of_solution = p.cost_of_solution - 1
-        p.solution = csp.backtracking_search(p)
+        b = p.cost_of_solution - 1
+        p.cost_of_solution = b
+        p.curr_domains = None
+        p.nassigns = 0
+        p.solution = csp.backtracking_search(p, select_unassigned_variable = csp.mrv, inference = csp.forward_checking)
+
+
+
+        print(p.solution)
 
     p.solution = aux
-    p.dump_solution(output_file_with_opt)
+    p.dump_solution(output_file)
 
 fh = open('Input.txt','r') #For testing purposes
 ft = open('Output.txt','w')
 fo = open('Output_with_Optimization.txt','w')
 
-
-solve(fh,ft,fo)
+solve(fh,ft)

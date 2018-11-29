@@ -272,12 +272,6 @@ def backtracking_search(csp,
         return None
 
     result = backtrack({})
-    '''for element in result:
-        print(element)
-        print(result[element].day)
-        print(result[element].hour)
-        print(result[element].room)
-        sys.stdout.flush()'''
 
     assert result is None or csp.goal_test(result)
     return result
